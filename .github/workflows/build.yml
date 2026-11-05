@@ -742,7 +742,7 @@ jobs:
           SLOT_NAME=$(echo "$SLOT" | sed 's/\(.\)/\1_/g; s/_$//')
           echo "应用 Droidspaces SYSVIPC kABI 修复补丁 (槽位: $SLOT / $SLOT_NAME)..."
           case "$KERNEL_VER" in
-            6.12)
+            6.12|6.18)
               PATCH_FILE="$DROIDSPACES_PATCHES/kernel-6.12/001.GKI-6.12-or-above-fix_sysvipc_kabi.patch"
               ;;
             5.10|5.15|6.1|6.6)
@@ -779,10 +779,10 @@ jobs:
             fi
           fi
 
-          # Android 16 / 6.12 的 rust_binder.ko 在启用 IPC_NS 后会引用
+          # Android 16+ / 6.12+ 的 rust_binder.ko 在启用 IPC_NS 后会引用
           # init_ipc_ns 与 put_ipc_ns，但当前 AOSP common 分支尚未导出这两个符号。
           # 这里补齐导出，避免 modpost 因 undefined symbol 失败。
-          if [ "$KERNEL_VER" = "6.12" ]; then
+          if [ "$KERNEL_VER" = "6.12" ] || [ "$KERNEL_VER" = "6.18" ]; then
             if [ -f "ipc/msgutil.c" ] && ! grep -qF 'EXPORT_SYMBOL(init_ipc_ns);' "ipc/msgutil.c"; then
               sed -i '/^struct msg_msgseg {/i EXPORT_SYMBOL(init_ipc_ns);' "ipc/msgutil.c"
               echo "已为 init_ipc_ns 补充符号导出"

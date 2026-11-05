@@ -331,7 +331,7 @@ on:
           - "enabled (开启)"
           - "patched (开启并修补)"
       droidspaces:
-        description: "Droidspaces 容器支持 (5.10~6.6: 槽位补丁, 6.12: 开/关)"
+        description: "Droidspaces 容器支持 (5.10~6.6: 槽位补丁, 6.12/6.18: 开/关)"
         required: false
         type: choice
         options:
